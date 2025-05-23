@@ -1,118 +1,117 @@
-import tkinter as tk
+import pygame
+import os
+import json
 
-class RisikoGUI:
-    def __init__(self, master, territori):
-        self.master = master
-        self.master.title("Risiko - Mappa")
-        self.territori = territori
+WIDTH, HEIGHT = 1600, 900
 
-        self.canvas_width = 1200
-        self.canvas_height = 800
-        self.canvas = tk.Canvas(master, width=self.canvas_width, height=self.canvas_height, bg="white")
-        self.canvas.pack()
+class GameUI:
+    def __init__(self):
+        pygame.init()
+        self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
+        pygame.display.set_caption("Risiko - Mappa")
+        self.clock = pygame.time.Clock()
+        self.running = True
 
-        self.posizioni = {
-            # North America
-            "Alaska": (80, 80),
-            "Northwest Territory": (200, 100),
-            "Greenland": (350, 50),
-            "Alberta": (180, 200),
-            "Ontario": (280, 180),
-            "Quebec": (350, 160),
-            "Western United States": (190, 320),
-            "Eastern United States": (300, 300),
-            "Central America": (220, 420),
+        # Carica immagine mappa
+        map_path = os.path.join("assets", "map.png")
+        self.map_img = pygame.image.load(map_path)
+        self.map_img = pygame.transform.scale(self.map_img, (WIDTH, HEIGHT))
 
-            # South America
-            "Venezuela": (300, 460),
-            "Peru": (260, 550),
-            "Brazil": (350, 550),
-            "Argentina": (300, 650),
+        # Percorso e caricamento JSON da assets
+        base_path = os.path.dirname(os.path.abspath(__file__))
+        json_path = os.path.join(base_path, "assets", "map.json")
 
-            # Europe
-            "Iceland": (450, 120),
-            "Scandinavia": (570, 130),
-            "Ukraine": (700, 230),
-            "Great Britain": (470, 220),
-            "Northern Europe": (620, 240),
-            "Western Europe": (570, 320),
-            "Southern Europe": (660, 330),
 
-            # Africa
-            "North Africa": (620, 430),
-            "Egypt": (730, 430),
-            "East Africa": (780, 510),
-            "Congo": (640, 600),
-            "South Africa": (690, 700),
-            "Madagascar": (780, 720),
 
-            # Asia (spostati e distanziati)
+        with open(json_path) as f:
+            self.territories_data = json.load(f)
+
+        # Coordinate approssimative per i territori (da adattare)
+        self.territory_positions = {
+            "Alaska": (100, 200),
+            "Northwest Territory": (180, 220),
+            "Alberta": (200, 260),
+            "Ontario": (260, 300),
+            "Quebec": (320, 280),
+            "Greenland": (400, 150),
+            "Western United States": (220, 360),
+            "Eastern United States": (300, 380),
+            "Central America": (250, 440),
+
+            "Venezuela": (350, 500),
+            "Peru": (320, 560),
+            "Brazil": (400, 570),
+            "Argentina": (360, 650),
+
+            "Iceland": (500, 120),
+            "Scandinavia": (580, 160),
+            "Ukraine": (680, 200),
+            "Great Britain": (520, 220),
+            "Northern Europe": (620, 230),
+            "Western Europe": (580, 280),
+            "Southern Europe": (630, 320),
+
+            "North Africa": (600, 400),
+            "Egypt": (660, 430),
+            "East Africa": (720, 500),
+            "Congo": (660, 550),
+            "South Africa": (700, 600),
+            "Madagascar": (760, 620),
+
             "Ural": (780, 180),
-            "Siberia": (870, 130),
-            "Yakutsk": (980, 110),
-            "Kamchatka": (1100, 110),
-            "Irkutsk": (890, 230),
-            "Mongolia": (950, 240),
-            "Japan": (1030, 240),
-            "Afghanistan": (720, 320),
-            "China": (830, 320),
-            "Middle East": (680, 380),
-            "India": (770, 390),
-            "Siam": (850, 450),
+            "Siberia": (880, 160),
+            "Yakutsk": (960, 140),
+            "Kamchatka": (1080, 160),
+            "Irkutsk": (940, 220),
+            "Mongolia": (1020, 240),
+            "Japan": (1120, 260),
+            "Afghanistan": (740, 260),
+            "China": (820, 280),
+            "Middle East": (720, 320),
+            "India": (780, 340),
+            "Siam": (840, 400),
 
-            # Australia / Oceania (più distanziata)
-            "Indonesia": (880, 610),
-            "New Guinea": (950, 650),
-            "Western Australia": (880, 700),
-            "Eastern Australia": (950, 740),
+            "Indonesia": (900, 520),
+            "New Guinea": (940, 580),
+            "Western Australia": (860, 600),
+            "Eastern Australia": (920, 620),
         }
 
-        # Linee speciali che attraversano il bordo del canvas (wrap-around)
-        self.linee_speciali = {
-            ("Alaska", "Kamchatka"): [(-50, 80), (1250, 110)],
-            ("Kamchatka", "Alaska"): [(1250, 110), (-50, 80)],
-        }
+    def draw_map(self):
+        self.screen.blit(self.map_img, (0, 0))
+        self.draw_connections()
 
-        self.raggio_territorio = 25
-        self.font_nome = ("Arial", 12, "bold")
-        self.font_truppe = ("Arial", 14, "bold")
+    def draw_connections(self):
+        line_color = (255, 0, 0)  # rosso
+        line_width = 3
 
-        self.disegna_mappa()
-
-    def disegna_mappa(self):
-        self.canvas.delete("all")
-
-        # Disegna linee (normali o wrap-around)
-        for territorio in self.territori.values():
-            x1, y1 = self.posizioni.get(territorio.name, (0, 0))
-            for vicino in territorio.neighbors:
-                x2, y2 = self.posizioni.get(vicino, (0, 0))
-                if x1 and x2:
-                    key = (territorio.name, vicino)
-                    if key in self.linee_speciali:
-                        punti = self.linee_speciali[key]
-                        self.canvas.create_line(x1, y1, punti[0][0], punti[0][1], fill="gray", width=2)
-                        self.canvas.create_line(punti[1][0], punti[1][1], x2, y2, fill="gray", width=2)
-                    else:
-                        self.canvas.create_line(x1, y1, x2, y2, fill="gray", width=2)
-
-        # Disegna territori come cerchi con testo
-        for territorio in self.territori.values():
-            x, y = self.posizioni.get(territorio.name, (0, 0))
-            if x == 0 and y == 0:
+        for territory, data in self.territories_data.items():
+            if territory not in self.territory_positions:
                 continue
 
-            if territorio.owner:
-                colore = "red" if territorio.owner.name == "Giocatore 1" else "blue"
-            else:
-                colore = "gray"
+            pos1 = self.territory_positions[territory]
 
-            r = self.raggio_territorio
-            self.canvas.create_oval(x - r, y - r, x + r, y + r, fill=colore, outline="black", width=2)
-            self.canvas.create_text(x, y - r - 10, text=territorio.name, font=self.font_nome, fill="black")
-            self.canvas.create_text(x, y, text=str(territorio.troops), font=self.font_truppe, fill="white")
+            for neighbor in data["neighbors"]:
+                if neighbor in self.territory_positions:
+                    pos2 = self.territory_positions[neighbor]
 
-def avvia_gui(territori):
-    root = tk.Tk()
-    app = RisikoGUI(root, territori)
-    root.mainloop()
+                    # Evita doppioni (linea da A a B e B a A)
+                    if territory < neighbor:
+                        pygame.draw.line(self.screen, line_color, pos1, pos2, line_width)
+
+    def run(self):
+        while self.running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.running = False
+
+            self.screen.fill((255, 255, 255))  # sfondo bianco
+            self.draw_map()
+            pygame.display.flip()
+            self.clock.tick(60)
+
+        pygame.quit()
+
+if __name__ == "__main__":
+    game = GameUI()
+    game.run()

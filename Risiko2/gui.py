@@ -17,6 +17,7 @@ class Player:
 class GUI:
     def __init__(self):
         pygame.init()
+        pygame.display.set_caption("Risiko") # nome della pagina
         self.screen = pygame.display.set_mode((1600, 900))
         self.font = pygame.font.SysFont(None, 24)
         self.clock = pygame.time.Clock()
@@ -25,53 +26,53 @@ class GUI:
         map_path = os.path.join("assets", "map.png")
         self.map_image = pygame.image.load(map_path)
 
-        self.players = [Player("Giocatore 1", (255, 0, 0)), Player("Giocatore 2", (0, 0, 255))]
+        self.players = [Player("Giocatore 1", (220, 20, 60)), Player("Giocatore 2", (30, 144, 255))]
         self.current_player = self.players[0]
 
         # Mappa territori e posizioni
         self.territory_positions = {
-            "Alaska": (100, 100),
-            "Northwest Territory": (260, 110),
-            "Alberta": (200, 170),
-            "Ontario": (300, 180),
-            "Quebec": (430, 170),
-            "Greenland": (600, 60),
-            "Western United States": (170, 250),
-            "Eastern United States": (300, 280),
-            "Central America": (180, 380),
-            "Venezuela": (340, 480),
-            "Peru": (340, 610),
-            "Brazil": (460, 580),
-            "Argentina": (390, 750),
-            "Iceland": (660, 95),
-            "Scandinavia": (810, 100),
-            "Ukraine": (900, 170),
-            "Great Britain": (700, 160),
-            "Northern Europe": (780, 190),
-            "Western Europe": (735, 220),
-            "Southern Europe": (800, 240),
-            "North Africa": (750, 400),
-            "Egypt": (840, 340),
-            "East Africa": (900, 450),
-            "Congo": (850, 540),
-            "South Africa": (860, 680),
-            "Madagascar": (980, 640),
-            "Ural": (1050, 130),
-            "Siberia": (1150, 120),
-            "Yakutsk": (1280, 100),
-            "Kamchatka": (1400, 110),
-            "Irkutsk": (1250, 170),
-            "Mongolia": (1300, 220),
-            "Japan": (1435, 285),
-            "Afghanistan": (1050, 220),
-            "China": (1250, 300),
-            "Middle East": (960, 300),
-            "India": (1100, 340),
-            "Siam": (1270, 400),
-            "Indonesia": (1350, 510),
-            "New Guinea": (1500, 550),
-            "Western Australia": (1370, 700),
-            "Eastern Australia": (1480, 680),
+            "Alaska": (90, 80),#
+            "Northwest Territory": (200, 80),#
+            "Alberta": (160, 125),#
+            "Ontario": (255, 130),#
+            "Quebec": (330, 130),#
+            "Greenland": (470, 40),#
+            "Western United States": (150, 180),#
+            "Eastern United States": (230, 200),
+            "Central America": (180, 300),#
+            "Venezuela": (280, 350),#
+            "Peru": (290, 450),#
+            "Brazil": (360, 430),#
+            "Argentina": (320, 540),#
+            "Iceland": (500, 95),#
+            "Scandinavia": (640, 70),#
+            "Ukraine": (730, 120),#
+            "Great Britain": (565, 110),#
+            "Northern Europe": (630, 140),#
+            "Western Europe": (570, 160),#
+            "Southern Europe": (650, 180),#
+            "North Africa": (590, 280),#
+            "Egypt": (670, 260),#
+            "East Africa": (720, 330),#
+            "Congo": (670, 380),#
+            "South Africa": (670, 480),#
+            "Madagascar": (790, 470),#
+            "Ural": (830, 100),#
+            "Siberia": (900, 70),#
+            "Yakutsk": (1020, 70),#
+            "Kamchatka": (1150, 80),#
+            "Irkutsk": (980, 120),#
+            "Mongolia": (1000, 170),#
+            "Japan": (1150, 190),#
+            "Afghanistan": (850, 170),#
+            "China": (960, 210),#
+            "Middle East": (750, 220),#
+            "India": (900, 250),#
+            "Siam": (1030, 300),#
+            "Indonesia": (1080, 380),#
+            "New Guinea": (1200, 400),
+            "Western Australia": (1100, 510),#
+            "Eastern Australia": (1180, 480),#
         }
 
         # Crea territori
@@ -96,14 +97,14 @@ class GUI:
             "Argentina": ["Peru", "Brazil"],
             "Iceland": ["Greenland", "Great Britain", "Scandinavia"],
             "Scandinavia": ["Iceland", "Great Britain", "Northern Europe", "Ukraine"],
-            "Ukraine": ["Scandinavia", "Northern Europe", "Ural", "Afghanistan", "Middle East"],
+            "Ukraine": ["Scandinavia", "Northern Europe", "Ural", "Afghanistan", "Middle East", "Southern Europe"],
             "Great Britain": ["Iceland", "Scandinavia", "Northern Europe", "Western Europe"],
             "Northern Europe": ["Great Britain", "Scandinavia", "Ukraine", "Western Europe", "Southern Europe"],
             "Western Europe": ["Great Britain", "Northern Europe", "Southern Europe", "North Africa"],
             "Southern Europe": ["Western Europe", "Northern Europe", "Ukraine", "Middle East", "North Africa", "Egypt"],
-            "North Africa": ["Western Europe", "Southern Europe", "Egypt", "Congo", "Brazil"],
+            "North Africa": ["Western Europe", "Southern Europe", "Egypt", "Congo", "Brazil","East Africa"],
             "Egypt": ["North Africa", "Southern Europe", "Middle East", "East Africa"],
-            "East Africa": ["Egypt", "Middle East", "Congo", "South Africa", "Madagascar"],
+            "East Africa": ["Egypt", "Middle East", "Congo", "South Africa", "Madagascar", "North Africa"],
             "Congo": ["North Africa", "East Africa", "South Africa"],
             "South Africa": ["Congo", "East Africa", "Madagascar"],
             "Madagascar": ["South Africa", "East Africa"],

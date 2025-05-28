@@ -1,6 +1,7 @@
 import json
 import os
-from gui import GUI  # importa direttamente la classe GUI da gui.py
+from gui import GUI
+
 
 class Player:
     def __init__(self, name):
@@ -41,15 +42,6 @@ def load_territories(json_path, players):
 
     return territories
 
-def main():
-    player1 = Player("Giocatore 1")
-    player2 = Player("Giocatore 2")
-
-    json_path = os.path.join("assets", "map.json")
-    territories = load_territories(json_path, [player1, player2])
-
-    gui = GUI()  # crea istanza GUI correttamente
-    gui.run()    # avvia la GUI (devi avere un metodo run() in GUI)
-
 if __name__ == "__main__":
-    main()
+    gui = GUI()
+    gui.run()

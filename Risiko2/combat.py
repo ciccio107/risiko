@@ -1,3 +1,4 @@
+# combat.py
 import random
 
 
@@ -27,4 +28,3 @@ def combattimento(attaccante, difensore, truppe_attaccante, truppe_difensore):
     truppe_difensore_finali = max(truppe_difensore - perdite_difensore, 0)
 
     return truppe_attaccante_finali, truppe_difensore_finali
-
